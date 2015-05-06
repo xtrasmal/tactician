@@ -20,4 +20,10 @@ interface HandlerLocator
      * @throws MissingHandlerException
      */
     public function getHandlerForCommand($commandName);
+
+    /**
+     * @param string $commandName
+     * @return boolean
+     */
+    public function hasHandlerForCommand($commandName);
 }

@@ -6,6 +6,9 @@ use League\Tactician\Handler\CommandNameExtractor\ClassNameExtractor;
 use League\Tactician\Handler\MethodNameInflector\HandleClassNameInflector;
 use League\Tactician\Handler\CommandHandlerMiddleware;
 use League\Tactician\Execution\HandlerExecution;
+use League\Tactician\Execution\ChainExecutor;
+use League\Tactician\Plugins\SelfExecutingCommands\SelfExecution;
+use League\Tactician\Plugins\SelfExecutingCommands\SelfExecutingCommand;
 
 // Our example Command and Handler. ///////////////////////////////////////////
 class RegisterUserCommand
@@ -23,6 +26,14 @@ class RegisterUserHandler
     }
 }
 
+class TurnOffLightCommand implements SelfExecutingCommand
+{
+    public function execute()
+    {
+        echo "Light turned off!\n";
+    }
+}
+
 // Setup the bus, normally in your DI container ///////////////////////////////
 $locator = new InMemoryLocator();
 $locator->addHandler(new RegisterUserHandler(), RegisterUserCommand::class);
@@ -30,10 +41,15 @@ $locator->addHandler(new RegisterUserHandler(), RegisterUserCommand::class);
 // Middleware is Tactician's plugin system. Even finding the handler and
 // executing it is a plugin that we're configuring here.
 $handlerMiddleware = new CommandHandlerMiddleware(
-    new HandlerExecution(
-        new ClassNameExtractor(),
-        $locator,
-        new HandleClassNameInflector()
+    new ChainExecutor(
+        [
+            new SelfExecution(),
+            new HandlerExecution(
+                new ClassNameExtractor(),
+                $locator,
+                new HandleClassNameInflector()
+            )
+        ]
     )
 );
 
@@ -45,3 +61,4 @@ $command->emailAddress = 'alice@example.com';
 $command->password = 'secret';
 
 $commandBus->handle($command);
+$commandBus->handle(new TurnOffLightCommand());

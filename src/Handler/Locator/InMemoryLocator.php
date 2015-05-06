@@ -76,4 +76,13 @@ class InMemoryLocator implements HandlerLocator
 
         return $this->handlers[$commandName];
     }
+
+    /**
+     * @param string $commandName
+     * @return boolean
+     */
+    public function hasHandlerForCommand($commandName)
+    {
+        return isset($this->handlers[$commandName]);
+    }
 }
