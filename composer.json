@@ -9,6 +9,13 @@
             "homepage": "http://tactician.thephpleague.com"
         }
     ],
+  "repositories": 
+  [
+      {
+          "type": "vcs",
+          "url": "http://github.com/xtrasmal/tactician"
+      }
+  ],     
     "require": {
         "php":  ">=5.3"
     },
